@@ -1,6 +1,5 @@
 package com.tek.pagerindicator
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
@@ -13,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -22,6 +20,7 @@ fun PagerIndicator(
     pagerState: PagerState,
     intSize: IntSize,
     dotStyle: DotStyle = DotStyle.defaultDotStyle,
+    dotAnimation: DotAnimation = DotAnimation(),
     orientation: Orientation = Orientation.Vertical
 ) {
 
@@ -30,29 +29,24 @@ fun PagerIndicator(
     }
 
     var range by rememberSaveable {
-        mutableStateOf(RangeChanged(0, dotStyle.visibleDotCount-1))
+        mutableStateOf(RangeChanged(0, dotStyle.visibleDotCount - 1))
     }
 
     fun updateRange(index: Int) {
-        if (index == range.endIndex && index != pageCount-1) {
+        if (index == range.endIndex && index != pageCount - 1) {
             range = RangeChanged(
                 startIndex = range.startIndex + 1,
                 endIndex = range.endIndex + 1
             )
-            Log.e("rangeChanged", "in PagerIndicator $range")
 
         } else if (index == range.startIndex && index != 0) {
             range = RangeChanged(
                 startIndex = range.startIndex - 1,
-                endIndex = range.endIndex-1
+                endIndex = range.endIndex - 1
             )
-            Log.e("rangeChanged", "in PagerIndicator $range")
-
         }
 
     }
-
-
 
 
     val indicatorController =
@@ -62,7 +56,7 @@ fun PagerIndicator(
             dotStyle = dotStyle,
             orientation = orientation,
             startIndex = page,
-            startRange =  range.startIndex..range.endIndex
+            startRange = range.startIndex..range.endIndex
 
         )
 
@@ -75,11 +69,28 @@ fun PagerIndicator(
     }
 
 
-
+    indicatorController.sizes.clear()
+    indicatorController.offSets.clear()
+    indicatorController.colors.clear()
     for (i in 0 until pageCount) {
-        indicatorController.sizes.add(animateFloatAsState(targetValue = indicatorController.sizeTargets[i]))
-        indicatorController.offSets.add(animateOffsetAsState(targetValue = indicatorController.offsetTargets[i]))
-        indicatorController.colors.add(animateColorAsState(targetValue = indicatorController.colorTargets[i]))
+        indicatorController.sizes.add(
+            animateFloatAsState(
+                targetValue = indicatorController.sizeTargets[i],
+                dotAnimation.sizeAnim
+            )
+        )
+        indicatorController.offSets.add(
+            animateOffsetAsState(
+                targetValue = indicatorController.offsetTargets[i],
+                dotAnimation.offsetAnim
+            )
+        )
+        indicatorController.colors.add(
+            animateColorAsState(
+                targetValue = indicatorController.colorTargets[i],
+                dotAnimation.colorAnim
+            )
+        )
     }
 
 

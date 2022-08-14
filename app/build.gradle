@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.tek.pager_indicator"
@@ -36,7 +36,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion compose_compiler_version
     }
     packagingOptions {
         resources {
@@ -61,8 +61,8 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
     implementation project(":PagerIndicator")
-
-    implementation 'com.google.accompanist:accompanist-pager:0.23.1'
+   // implementation 'com.github.talhatek:pager_indicator:1.0'
+    implementation 'com.google.accompanist:accompanist-pager:0.26.1-alpha'
 
 
 }
