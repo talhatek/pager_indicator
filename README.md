@@ -20,8 +20,16 @@ allprojects {
 
 ```
 And add a dependency code to your **module**'s `build.gradle` file.
+
+Compose 1.1 (1.1.x)
 ```gradle
 implementation 'com.github.talhatek:pager_indicator:1.0'
+```
+
+
+Compose 1.2 (1.2.x)
+```gradle
+implementation 'com.github.talhatek:pager_indicator:2.0'
 ```
 You can call **PagerIndicator** inside your composable content.
 ```kotlin
