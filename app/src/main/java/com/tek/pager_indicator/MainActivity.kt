@@ -5,21 +5,22 @@ package com.tek.pager_indicator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.pager.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.VerticalPager
+import com.google.accompanist.pager.rememberPagerState
+import com.tek.pagerindicator.DotStyle
 import com.tek.pagerindicator.PagerIndicator
 
 
@@ -68,26 +69,13 @@ fun HorizontalPagerIndicator() {
                 fontSize = 32.sp
             )
         }
-        BoxWithConstraints(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            val density = LocalDensity.current
-            val h = this.maxHeight
-            val w = this.maxWidth
-            PagerIndicator(
-                pageCount = 7,
-                pagerState = pagerState,
-                intSize = with(density) {
-                    IntSize(
-                        w.toPx().toInt(),
-                        h.toPx().toInt()
-                    )
-                },
-                orientation = Orientation.Horizontal
-            )
-
-        }
+        PagerIndicator(
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.Yellow),
+            pagerState = pagerState,
+            orientation = Orientation.Horizontal
+        )
 
     }
 
@@ -100,7 +88,7 @@ fun VerticalPagerIndicator() {
         HorizontalPager(
             modifier = Modifier
                 .weight(9f),
-            count = 7,
+            count = 11,
             state = pagerState
         ) { page ->
             Text(
@@ -118,26 +106,18 @@ fun VerticalPagerIndicator() {
                 fontSize = 32.sp
             )
         }
-        BoxWithConstraints(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            val density = LocalDensity.current
-            val h = this.maxHeight
-            val w = this.maxWidth
-            PagerIndicator(
-                pageCount = 7,
-                pagerState = pagerState,
-                intSize = with(density) {
-                    IntSize(
-                        w.toPx().toInt(),
-                        h.toPx().toInt()
-                    )
-                },
-                orientation = Orientation.Vertical
+        PagerIndicator(
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.Red),
+            pagerState = pagerState,
+            dotStyle = DotStyle.defaultDotStyle.copy(
+                visibleDotCount = 9,
+                currentDotColor = Color.Yellow,
+                regularDotColor = Color.White
             )
+        )
 
-        }
 
     }
 

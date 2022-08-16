@@ -17,8 +17,8 @@ class IndicatorController(
     private val size: IntSize,
     private val dotStyle: DotStyle,
     private val orientation: Orientation,
-    private val startIndex:Int=0,
-    startRange:IntRange = startIndex .. dotStyle.visibleDotCount-1
+    private val startIndex: Int = 0,
+    startRange: IntRange = startIndex..dotStyle.visibleDotCount.minus(1)
 
 ) {
     private var selectedIndex = mutableStateOf(startIndex)
@@ -37,39 +37,23 @@ class IndicatorController(
     private var visibleRange = startRange
 
     init {
+        Log.e("indicatorController","init")
         for (i in 0 until count) {
-            colorTargets.add(if (i == selectedIndex.value) dotStyle.currentDotColor else dotStyle.regularDotColor)
-            sizeTargets.add(
-                when (i) {
-                    selectedIndex.value -> dotStyle.currentDotRadius
-                    visibleRange.first -> {
-                        if (visibleRange.first != 0)
-                            dotStyle.notLastDotRadius
-                        else
-                            dotStyle.regularDotRadius
-                    }
-                    visibleRange.last -> {
-                        if (visibleRange.last != count - 1)
-                            dotStyle.notLastDotRadius
-                        else
-                            dotStyle.regularDotRadius
-
-                    }
-                    in visibleRange -> dotStyle.regularDotRadius
-                    else -> 0f
-                }
-            )
+            colorTargets.add(colorFinder(i))
+            sizeTargets.add(sizeFinder(i))
 
             offsetTargets.add(
                 when (orientation) {
                     Orientation.Vertical -> Offset(
                         x = calculateStartOffset() + i.times(dotStyle.dotMargin) + i.times(
-                            dotStyle.regularDotRadius.times(2)) - ((startRange.first) * offsetEach),
+                            dotStyle.regularDotRadius.times(2)
+                        ) - ((startRange.first) * offsetEach),
                         y = size.center.y.toFloat()
                     )
                     else -> Offset(
                         y = calculateStartOffset() + i.times(dotStyle.dotMargin) + i.times(
-                            dotStyle.regularDotRadius.times(2)) - ((startRange.first) * offsetEach),
+                            dotStyle.regularDotRadius.times(2)
+                        ) - ((startRange.first) * offsetEach),
                         x = size.center.x.toFloat()
                     )
                 }
@@ -79,7 +63,15 @@ class IndicatorController(
         }
     }
 
+    fun clearAll() {
+        sizes.clear()
+        offSets.clear()
+        colors.clear()
+    }
+
     fun pageChanged(index: Int) {
+        Log.e("indicatorController","pageChanged")
+
         if (index == selectedIndex.value)
             return
         if (selectedIndex.value > index)
@@ -92,9 +84,9 @@ class IndicatorController(
         val start = visibleRange.first
         val end = visibleRange.last
         visibleRange = if (isNext) {
-            (start + 1)..(end + 1)
+           start.plus(1)..end.plus(1)
         } else {
-            (start - 1) .. (end-1)
+            start.minus(1)..end.minus(1)
         }
         Log.e("rangeChanged", "in indicatorController $visibleRange")
 
@@ -117,38 +109,14 @@ class IndicatorController(
             updateRange(true)
             selectedIndex.value++
             for (i in 0 until count) {
-                val size = when (i) {
-                    selectedIndex.value -> dotStyle.currentDotRadius
-                    visibleRange.first -> {
-                        if (visibleRange.first != 0)
-                            dotStyle.notLastDotRadius
-                        else
-                            dotStyle.regularDotRadius
-                    }
-                    visibleRange.last -> {
-                        if (visibleRange.last != count - 1)
-                            dotStyle.notLastDotRadius
-                        else
-                            dotStyle.regularDotRadius
 
-                    }
-                    in visibleRange -> dotStyle.regularDotRadius
-                    else -> 0f
-                }
-                val color = when (i) {
-                    selectedIndex.value -> dotStyle.currentDotColor
-                    else -> dotStyle.regularDotColor
-                }
-                sizeTargets[i] = size
-                colorTargets[i] = color
+                sizeTargets[i] = sizeFinder(i)
+                colorTargets[i] = colorFinder(i)
             }
 
         } else {
-            sizeTargets[selectedIndex.value] = dotStyle.regularDotRadius
-            colorTargets[selectedIndex.value] = dotStyle.regularDotColor
-            selectedIndex.value++
-            sizeTargets[selectedIndex.value] = dotStyle.currentDotRadius
-            colorTargets[selectedIndex.value] = dotStyle.currentDotColor
+            changeDotWithoutOffsetChange(MOVEMENT.FORWARD)
+
         }
 
 
@@ -170,40 +138,65 @@ class IndicatorController(
             updateRange(false)
             selectedIndex.value--
             for (i in 0 until count) {
-                val size = when (i) {
-                    selectedIndex.value -> dotStyle.currentDotRadius
-                    visibleRange.first -> {
-                        if (visibleRange.first != 0)
-                            dotStyle.notLastDotRadius
-                        else
-                            dotStyle.regularDotRadius
-                    }
-                    visibleRange.last -> {
-                        if (visibleRange.last != count - 1)
-                            dotStyle.notLastDotRadius
-                        else
-                            dotStyle.regularDotRadius
-                    }
-                    in visibleRange -> dotStyle.regularDotRadius
-
-                    else -> 0f
-                }
-                val color = when (i) {
-                    selectedIndex.value -> dotStyle.currentDotColor
-                    else -> dotStyle.regularDotColor
-                }
-                sizeTargets[i] = size
-                colorTargets[i] = color
+                sizeTargets[i] = sizeFinder(i)
+                colorTargets[i] = colorFinder(i)
             }
 
         } else {
-            sizeTargets[selectedIndex.value] = dotStyle.regularDotRadius
-            colorTargets[selectedIndex.value] = dotStyle.regularDotColor
-            selectedIndex.value--
-            sizeTargets[selectedIndex.value] = dotStyle.currentDotRadius
-            colorTargets[selectedIndex.value] = dotStyle.currentDotColor
+           changeDotWithoutOffsetChange(MOVEMENT.BACKWARD)
         }
 
+    }
+    enum class MOVEMENT{
+        FORWARD,BACKWARD
+    }
+    private fun changeDotWithoutOffsetChange(movement: MOVEMENT){
+        when(movement){
+            MOVEMENT.FORWARD->{
+                sizeTargets[selectedIndex.value] = dotStyle.regularDotRadius
+                colorTargets[selectedIndex.value] = dotStyle.regularDotColor
+                selectedIndex.value++
+                sizeTargets[selectedIndex.value] = dotStyle.currentDotRadius
+                colorTargets[selectedIndex.value] = dotStyle.currentDotColor
+            }
+            else->{
+                sizeTargets[selectedIndex.value] = dotStyle.regularDotRadius
+                colorTargets[selectedIndex.value] = dotStyle.regularDotColor
+                selectedIndex.value--
+                sizeTargets[selectedIndex.value] = dotStyle.currentDotRadius
+                colorTargets[selectedIndex.value] = dotStyle.currentDotColor
+            }
+        }
+
+    }
+
+    private fun colorFinder(index: Int): Color {
+        return when (index) {
+            selectedIndex.value -> dotStyle.currentDotColor
+            else -> dotStyle.regularDotColor
+
+        }
+    }
+
+    private fun sizeFinder(index: Int): Float {
+        return when (index) {
+            selectedIndex.value -> dotStyle.currentDotRadius
+            visibleRange.first -> {
+                if (visibleRange.first != 0)
+                    dotStyle.notLastDotRadius
+                else
+                    dotStyle.regularDotRadius
+            }
+            visibleRange.last -> {
+                if (visibleRange.last != count - 1)
+                    dotStyle.notLastDotRadius
+                else
+                    dotStyle.regularDotRadius
+            }
+            in visibleRange -> dotStyle.regularDotRadius
+
+            else -> 0f
+        }
     }
 
     private fun calculateStartOffset(): Float {
@@ -231,7 +224,7 @@ fun rememberIndicatorController(
     startIndex: Int,
     startRange: IntRange
 ): IndicatorController {
-    return remember{
-        IndicatorController(count, size, dotStyle, orientation,startIndex,startRange)
+    return remember {
+        IndicatorController(count, size, dotStyle, orientation, startIndex, startRange)
     }
 }
