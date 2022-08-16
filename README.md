@@ -6,7 +6,9 @@
 </p>
 
 ## Demo
+<p align="center">
 <img src="gif/indicator.gif" width="600" height="375"/>
+</p>
 
 # How to use
 
