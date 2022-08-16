@@ -6,7 +6,7 @@
 </p>
 
 ## Demo
-<img src="gif/indicator.gif" width="288" height="640"/>
+<img src="gif/indicator.gif" width="600" height="375"/>
 
 # How to use
 
