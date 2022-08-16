@@ -29,16 +29,17 @@ implementation 'com.github.talhatek:pager_indicator:1.0'
 
 Compose 1.2 (1.2.x)
 ```gradle
-implementation 'com.github.talhatek:pager_indicator:2.0'
+implementation 'com.github.talhatek:pager_indicator:2.1'
 ```
 You can call **PagerIndicator** inside your composable content.
 ```kotlin
 PagerIndicator(
-  pageCount = 7,
+  modifier = Modifier,
   pagerState = pagerState,
-  intSize = IntSize(576,12),
+  dotStyle = DotStyle.defaultDotStyle,
+  dotAnimation = DotAnimation(),
   orientation = Orientation.Vertical
-)
+ )
 ```
 # Customization
 
@@ -52,6 +53,9 @@ PagerIndicator(
 | visibleDotCount     | Max visible dot count                     | 5           |
 | currentDotColor     | Current dot color                         | #0d6efd     |
 | regularDotColor     | Regular dot color                         | #6c757d     |
+| sizeAnim            | Size change  animation                    | spring      |
+| offsetAnim          | Offset change  animation                  | spring      |
+| colorAnim           | Color change  animation                   | spring      |
 
 # License
 ```xml
