@@ -7,7 +7,7 @@
 
 ## Demo
 <p align="center">
-<img src="gif/indicator.gif" width="600" height="375"/>
+<img src="gif/indicator.gif" width="400" height="889"/>
 </p>
 
 # How to use
