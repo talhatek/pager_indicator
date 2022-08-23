@@ -31,7 +31,7 @@ implementation 'com.github.talhatek:pager_indicator:1.0'
 
 Compose 1.2 (1.2.x)
 ```gradle
-implementation 'com.github.talhatek:pager_indicator:2.1'
+implementation 'com.github.talhatek:pager_indicator:2.2'
 ```
 You can call **PagerIndicator** inside your composable content.
 ```kotlin
@@ -39,7 +39,7 @@ PagerIndicator(
   modifier = Modifier,
   pagerState = pagerState,
   dotStyle = DotStyle.defaultDotStyle,
-  dotAnimation = DotAnimation(),
+  dotAnimation = DotAnimation.defaultDotAnimation,
   orientation = Orientation.Vertical
  )
 ```
