@@ -57,7 +57,7 @@ afterEvaluate {
 
                 groupId = 'com.github.talhatek'
                 artifactId = 'pager-indicator'
-                version = '2.1'
+                version = '2.2'
             }
         }
     }

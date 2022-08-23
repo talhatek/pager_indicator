@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.IntSize
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 internal fun PagerIndicatorKernel(
@@ -23,7 +22,7 @@ internal fun PagerIndicatorKernel(
     pagerState: PagerState,
     intSize: IntSize,
     dotStyle: DotStyle = DotStyle.defaultDotStyle,
-    dotAnimation: DotAnimation = DotAnimation(),
+    dotAnimation: DotAnimation = DotAnimation.defaultDotAnimation,
     orientation: Orientation = Orientation.Vertical
 ) {
     //save page on config changes
@@ -112,7 +111,7 @@ fun PagerIndicator(
     modifier: Modifier,
     pagerState: PagerState,
     dotStyle: DotStyle = DotStyle.defaultDotStyle,
-    dotAnimation: DotAnimation = DotAnimation(),
+    dotAnimation: DotAnimation = DotAnimation.defaultDotAnimation,
     orientation: Orientation = Orientation.Vertical
 ) {
     BoxWithConstraints(modifier = modifier) {

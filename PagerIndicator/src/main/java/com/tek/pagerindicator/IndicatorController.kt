@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.center
 
-class IndicatorController(
+internal class IndicatorController(
     private val count: Int,
     private val size: IntSize,
     private val dotStyle: DotStyle,
@@ -20,7 +20,7 @@ class IndicatorController(
     private val startIndex: Int = 0,
     startRange: IntRange = startIndex..dotStyle.visibleDotCount.minus(1)
 
-) {
+) : IndicatorRangeProcessor, IndicatorMovementProcessor {
     private var selectedIndex = mutableStateOf(startIndex)
 
     internal val colorTargets = SnapshotStateList<Color>()
@@ -37,7 +37,7 @@ class IndicatorController(
     private var visibleRange = startRange
 
     init {
-        Log.e("indicatorController","init")
+        Log.e("indicatorController", "init")
         for (i in 0 until count) {
             colorTargets.add(colorFinder(i))
             sizeTargets.add(sizeFinder(i))
@@ -70,7 +70,7 @@ class IndicatorController(
     }
 
     fun pageChanged(index: Int) {
-        Log.e("indicatorController","pageChanged")
+        Log.e("indicatorController", "pageChanged")
 
         if (index == selectedIndex.value)
             return
@@ -78,18 +78,6 @@ class IndicatorController(
             prev()
         else
             next()
-    }
-
-    private fun updateRange(isNext: Boolean) {
-        val start = visibleRange.first
-        val end = visibleRange.last
-        visibleRange = if (isNext) {
-           start.plus(1)..end.plus(1)
-        } else {
-            start.minus(1)..end.minus(1)
-        }
-        Log.e("rangeChanged", "in indicatorController $visibleRange")
-
     }
 
     private fun next() {
@@ -105,8 +93,7 @@ class IndicatorController(
                         x = offsetTargets[i].x
                     )
                 }
-
-            updateRange(true)
+            processRangeNext()
             selectedIndex.value++
             for (i in 0 until count) {
 
@@ -115,11 +102,8 @@ class IndicatorController(
             }
 
         } else {
-            changeDotWithoutOffsetChange(MOVEMENT.FORWARD)
-
+            processMovementForward()
         }
-
-
     }
 
     private fun prev() {
@@ -134,8 +118,7 @@ class IndicatorController(
                             x = offsetTargets[i].x
                         )
                     }
-
-            updateRange(false)
+            processRangePrev()
             selectedIndex.value--
             for (i in 0 until count) {
                 sizeTargets[i] = sizeFinder(i)
@@ -143,32 +126,11 @@ class IndicatorController(
             }
 
         } else {
-           changeDotWithoutOffsetChange(MOVEMENT.BACKWARD)
+            processMovementBackward()
         }
 
     }
-    enum class MOVEMENT{
-        FORWARD,BACKWARD
-    }
-    private fun changeDotWithoutOffsetChange(movement: MOVEMENT){
-        when(movement){
-            MOVEMENT.FORWARD->{
-                sizeTargets[selectedIndex.value] = dotStyle.regularDotRadius
-                colorTargets[selectedIndex.value] = dotStyle.regularDotColor
-                selectedIndex.value++
-                sizeTargets[selectedIndex.value] = dotStyle.currentDotRadius
-                colorTargets[selectedIndex.value] = dotStyle.currentDotColor
-            }
-            else->{
-                sizeTargets[selectedIndex.value] = dotStyle.regularDotRadius
-                colorTargets[selectedIndex.value] = dotStyle.regularDotColor
-                selectedIndex.value--
-                sizeTargets[selectedIndex.value] = dotStyle.currentDotRadius
-                colorTargets[selectedIndex.value] = dotStyle.currentDotColor
-            }
-        }
 
-    }
 
     private fun colorFinder(index: Int): Color {
         return when (index) {
@@ -213,10 +175,36 @@ class IndicatorController(
         }
     }
 
+    override fun processRangeNext() {
+        visibleRange = visibleRange.first.plus(1)..visibleRange.last.plus(1)
+    }
+
+    override fun processRangePrev() {
+        visibleRange = visibleRange.first.minus(1)..visibleRange.last.minus(1)
+
+    }
+
+    override fun processMovementForward() {
+        sizeTargets[selectedIndex.value] = dotStyle.regularDotRadius
+        colorTargets[selectedIndex.value] = dotStyle.regularDotColor
+        selectedIndex.value++
+        sizeTargets[selectedIndex.value] = dotStyle.currentDotRadius
+        colorTargets[selectedIndex.value] = dotStyle.currentDotColor
+    }
+
+    override fun processMovementBackward() {
+        sizeTargets[selectedIndex.value] = dotStyle.regularDotRadius
+        colorTargets[selectedIndex.value] = dotStyle.regularDotColor
+        selectedIndex.value--
+        sizeTargets[selectedIndex.value] = dotStyle.currentDotRadius
+        colorTargets[selectedIndex.value] = dotStyle.currentDotColor
+
+    }
+
 }
 
 @Composable
-fun rememberIndicatorController(
+internal fun rememberIndicatorController(
     count: Int,
     size: IntSize,
     dotStyle: DotStyle,
