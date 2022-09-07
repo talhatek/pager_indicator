@@ -3,6 +3,7 @@
   <a href="https://www.linkedin.com/in/talhatek/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a>
   <a href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/></a>
   <a href="https://jitpack.io/#talhatek/pager_indicator"><img alt="Version" src="https://jitpack.io//v/talhatek/pager_indicator.svg"/></a>
+    <a href="https://jitpack.io/#talhatek/pager_indicator"><img alt="Version" src="https://jitpack.io//v/talhatek/pager_indicator/month.svg"/></a>
 </p>
 
 ## Demo
